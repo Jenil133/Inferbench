@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools==75.8.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inferbench"
+version = "0.2.0"
+description = "Reproducible TensorRT-LLM serving benchmarks with explicit profiling limits"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [{name = "InferBench contributors"}]
+dependencies = []
+keywords = ["TensorRT-LLM", "Nsight Systems", "inference", "benchmark"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+
+[project.scripts]
+inferbench = "inferbench.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+inferbench = ["schemas/*.json"]
+
+[tool.setuptools.data-files]
+"share/inferbench/docs" = ["docs/*.md"]
+"share/inferbench/examples" = ["examples/*.json", "examples/*.csv"]
+"share/inferbench/scripts" = ["scripts/*.sh"]
+"share/inferbench" = ["Dockerfile", "docker-compose.yml", "Makefile", "README.md", "LICENSE"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]

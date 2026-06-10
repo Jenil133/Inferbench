@@ -1,0 +1,33 @@
+# Python/build
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# Benchmark artifacts
+reports/
+profiles/
+logs/
+*.nsys-rep
+*.qdrep
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Local models, credentials, and environment
+models/
+.env
+.env.*
+*.pem
+*.key
+credentials*.json
+
+# Editors/OS
+.DS_Store
+.idea/
+.vscode/
