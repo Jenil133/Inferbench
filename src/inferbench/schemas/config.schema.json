@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inferbench.local/schema/config-2.0.json",
+  "title": "InferBench configuration",
+  "type": "object",
+  "required": ["model", "warmup_iterations", "measured_trials", "matrix"],
+  "properties": {
+    "mode": {"enum": ["simulate", "hardware"]},
+    "model": {"type": "string", "minLength": 1},
+    "seed": {"type": "integer", "minimum": 0},
+    "warmup_iterations": {"type": "integer", "minimum": 1},
+    "warmup_request_count": {"type": "integer", "minimum": 1},
+    "measured_trials": {"type": "integer", "minimum": 1},
+    "independent_repetitions": {"type": "integer", "minimum": 1},
+    "request_count": {"type": "integer", "minimum": 1},
+    "output_tokens": {"type": "integer", "minimum": 1},
+    "output_dir": {"type": "string", "minLength": 1},
+    "execution_order": {"enum": ["counterbalanced", "randomized"]},
+    "matrix": {
+      "type": "object",
+      "required": ["concurrency", "tensor_parallel", "precisions"],
+      "properties": {
+        "concurrency": {"type": "array", "minItems": 1, "items": {"type": "integer", "minimum": 1}, "uniqueItems": true},
+        "tensor_parallel": {"type": "array", "minItems": 1, "items": {"type": "integer", "minimum": 1}, "uniqueItems": true},
+        "precisions": {"type": "array", "minItems": 1, "items": {"enum": ["fp16", "fp8"]}, "uniqueItems": true},
+        "affinity": {"type": "array", "items": {"enum": ["pinned", "unpinned"]}, "uniqueItems": true}
+      }
+    },
+    "server": {"type": "object"},
+    "nsight": {"type": "object"}
+  },
+  "additionalProperties": true
+}
