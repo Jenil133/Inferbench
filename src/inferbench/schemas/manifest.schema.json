@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inferbench.local/schema/manifest-2.0.json",
+  "title": "InferBench execution manifest",
+  "type": "object",
+  "required": ["schema_version", "execution_id", "config_fingerprint", "status", "created_at", "config_source_sha256", "code_provenance", "source_tree", "execution_plan", "resume_count", "points", "artifacts"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "execution_id": {"type": "string", "minLength": 1},
+    "config_fingerprint": {"$ref": "#/$defs/sha256"},
+    "status": {"enum": ["initializing", "running", "failed", "completed"]},
+    "created_at": {"type": "string"},
+    "config_source_name": {"type": "string"},
+    "config_source_sha256": {"$ref": "#/$defs/sha256"},
+    "inferbench_version": {"type": "string"},
+    "code_provenance": {"type": "object", "required": ["git_revision", "git_worktree_dirty", "project_root_name"]},
+    "source_tree": {
+      "type": "object", "required": ["sha256", "file_count", "files"],
+      "properties": {
+        "sha256": {"$ref": "#/$defs/sha256"}, "file_count": {"type": "integer", "minimum": 1},
+        "files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/sourceFile"}}
+      }
+    },
+    "execution_plan": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/plan"}},
+    "resume_count": {"type": "integer", "minimum": 0},
+    "points": {"type": "array", "items": {"$ref": "#/$defs/checkpoint"}},
+    "artifacts": {"type": "array", "items": {"$ref": "#/$defs/artifact"}},
+    "preflight": {"$ref": "#/$defs/preflight"},
+    "failure": {"type": "object", "required": ["type", "message"]},
+    "started_at": {"type": "string"}, "resumed_at": {"type": "string"},
+    "completed_at": {"type": "string"}, "failed_at": {"type": "string"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sourceFile": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256", "size_bytes"],
+      "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/sha256"}, "size_bytes": {"type": "integer", "minimum": 0}}
+    },
+    "point": {
+      "type": "object", "additionalProperties": false,
+      "required": ["concurrency", "tensor_parallel", "precision", "affinity", "repetition"],
+      "properties": {
+        "concurrency": {"type": "integer", "minimum": 1}, "tensor_parallel": {"type": "integer", "minimum": 1},
+        "precision": {"enum": ["fp16", "fp8"]}, "affinity": {"enum": ["pinned", "unpinned"]},
+        "repetition": {"type": "integer", "minimum": 1}
+      }
+    },
+    "plan": {
+      "type": "object", "additionalProperties": false, "required": ["sequence", "point_id", "point"],
+      "properties": {"sequence": {"type": "integer", "minimum": 1}, "point_id": {"type": "string"}, "point": {"$ref": "#/$defs/point"}}
+    },
+    "checkpoint": {
+      "type": "object", "additionalProperties": false, "required": ["point_id", "attempt", "status", "checkpoint", "updated_at"],
+      "properties": {
+        "point_id": {"type": "string"}, "attempt": {"type": "integer", "minimum": 1},
+        "status": {"enum": ["completed", "partial", "failed"]},
+        "checkpoint": {"type": "string"}, "updated_at": {"type": "string"}
+      }
+    },
+    "artifact": {
+      "type": "object", "additionalProperties": false, "required": ["path", "size_bytes", "sha256"],
+      "properties": {"path": {"type": "string"}, "size_bytes": {"type": "integer", "minimum": 0}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "preflight": {
+      "type": "object", "required": ["status", "checks", "resolved_commands"],
+      "properties": {
+        "status": {"enum": ["passed", "failed", "not_applicable"]}, "checks": {"type": "array", "items": {"type": "object"}},
+        "errors": {"type": "array", "items": {"type": "string"}}, "warnings": {"type": "array", "items": {"type": "string"}},
+        "resolved_commands": {"type": "array", "items": {"type": "object", "required": ["point_id", "argv", "profile_status"]}}
+      }
+    }
+  },
+  "additionalProperties": false
+}
