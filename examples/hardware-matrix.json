@@ -1,0 +1,39 @@
+{
+  "mode": "hardware",
+  "model": "meta-llama/Llama-3.1-8B-Instruct",
+  "warmup_iterations": 3,
+  "warmup_request_count": 8,
+  "measured_trials": 7,
+  "independent_repetitions": 2,
+  "request_count": 128,
+  "execution_order": "counterbalanced",
+  "output_tokens": 128,
+  "prompt": "Explain tensor parallelism in one concise paragraph.",
+  "output_dir": "../reports/hardware",
+  "matrix": {
+    "concurrency": [1, 4, 8],
+    "tensor_parallel": [1, 2],
+    "precisions": ["fp16", "fp8"],
+    "affinity": ["unpinned", "pinned"]
+  },
+  "server": {
+    "model_by_precision": {
+      "fp16": "/models/llama-3.1-8b-fp16",
+      "fp8": "/models/llama-3.1-8b-fp8"
+    },
+    "command": ["trtllm-serve", "{model}", "--tp_size", "{tp}", "--port", "8000"],
+    "endpoint": "http://127.0.0.1:8000/v1/completions",
+    "request_format": "completions",
+    "require_token_usage": true,
+    "readiness_url": "http://127.0.0.1:8000/health",
+    "readiness_statuses": [200],
+    "served_model_name": "llama-3.1-8b",
+    "startup_timeout_seconds": 600,
+    "request_timeout_seconds": 180,
+    "trial_timeout_seconds": 900,
+    "shutdown_timeout_seconds": 30,
+    "api_key_env": "INFERBENCH_API_KEY",
+    "affinity": {"cpus": "0-15"}
+  },
+  "nsight": {"enabled": true, "required": false}
+}

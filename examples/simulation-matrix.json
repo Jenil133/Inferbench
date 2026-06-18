@@ -1,0 +1,19 @@
+{
+  "mode": "simulate",
+  "model": "meta-llama/Llama-3.1-8B-Instruct",
+  "seed": 2025,
+  "warmup_iterations": 2,
+  "warmup_request_count": 8,
+  "measured_trials": 9,
+  "independent_repetitions": 2,
+  "request_count": 64,
+  "execution_order": "counterbalanced",
+  "output_tokens": 128,
+  "output_dir": "../reports/simulation",
+  "matrix": {
+    "concurrency": [1, 4, 8],
+    "tensor_parallel": [1, 2],
+    "precisions": ["fp16", "fp8"],
+    "affinity": ["unpinned", "pinned"]
+  }
+}

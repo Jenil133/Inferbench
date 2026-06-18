@@ -1,0 +1,18 @@
+services:
+  inferbench:
+    build:
+      context: .
+      args:
+        TRTLLM_IMAGE: ${TRTLLM_IMAGE:-nvcr.io/nvidia/tensorrt-llm/release:0.18.0}
+    gpus: all
+    ipc: host
+    security_opt:
+      - seccomp=unconfined
+    cap_add:
+      - SYS_ADMIN
+      - SYS_NICE
+    volumes:
+      - ${MODEL_DIR:-./models}:/models:ro
+      - ./examples:/workspace/inferbench/examples:ro
+      - ./reports:/workspace/inferbench/reports
+    command: ["run", "--config", "/workspace/inferbench/examples/hardware-matrix.json", "--output-dir", "/workspace/inferbench/reports/hardware"]
